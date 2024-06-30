@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rafael3032191/widgets/teclado.dart';
+import 'package:rafael3032191/widgets/visor.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,59 +12,39 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+        title: 'Calculadora',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: const Calculadora());
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class Calculadora extends StatefulWidget {
+  const Calculadora({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Calculadora> createState() => _CalculadoraState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _CalculadoraState extends State<Calculadora> {
+  String _texto = '';
 
-  void _incrementCounter() {
+  void _setComando(String texto) {
     setState(() {
-      _counter++;
+      _texto += texto;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      body: Column(
+        children: [
+          Visor(entrada: _texto),
+          Teclado(comando: _setComando),
+        ],
       ),
     );
   }
