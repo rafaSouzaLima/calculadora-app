@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rafael3032191/classes/core.dart';
 import 'package:rafael3032191/widgets/teclado.dart';
 import 'package:rafael3032191/widgets/visor.dart';
 
@@ -29,11 +30,17 @@ class Calculadora extends StatefulWidget {
 }
 
 class _CalculadoraState extends State<Calculadora> {
-  String _texto = '';
+  late Core _core;
+
+  @override
+  void initState() {
+    _core = Core();
+    super.initState();
+  }
 
   void _setComando(String texto) {
     setState(() {
-      _texto += texto;
+      _core.executar(texto);
     });
   }
 
@@ -42,7 +49,7 @@ class _CalculadoraState extends State<Calculadora> {
     return Scaffold(
       body: Column(
         children: [
-          Visor(entrada: _texto),
+          Visor(entrada: _core.resposta),
           Teclado(comando: _setComando),
         ],
       ),
