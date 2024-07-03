@@ -18,7 +18,7 @@ class Visor extends StatelessWidget {
                 child: Text(
                   entrada,
                   textAlign: TextAlign.right,
-                  maxLines: 1,
+                  maxLines: 2,
                   style: const TextStyle(
                     fontSize: 40,
                   ),
