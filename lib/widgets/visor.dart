@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class Visor extends StatefulWidget {
+class Visor extends StatelessWidget {
   final String entrada;
 
   const Visor({super.key, required this.entrada});
 
-  @override
-  State<Visor> createState() => _VisorState();
-}
-
-class _VisorState extends State<Visor> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -21,7 +16,7 @@ class _VisorState extends State<Visor> {
             children: [
               Expanded(
                 child: Text(
-                  widget.entrada,
+                  entrada,
                   textAlign: TextAlign.right,
                   maxLines: 1,
                   style: const TextStyle(
