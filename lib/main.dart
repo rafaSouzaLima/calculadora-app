@@ -50,6 +50,9 @@ class _CalculadoraState extends State<Calculadora> {
       body: Column(
         children: [
           Visor(entrada: _core.resposta),
+          const SizedBox(
+            height: 10,
+          ),
           Teclado(comando: _setComando),
         ],
       ),
