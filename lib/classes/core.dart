@@ -1,4 +1,5 @@
 
+import 'package:rafael3032191/classes/calculator_error.dart';
 import 'package:rafael3032191/classes/notacao_polonesa_reversa.dart';
 
 class Core {
@@ -20,6 +21,9 @@ class Core {
     } else if(comando == '=') {
       _calcularResultado();
     } else {
+      if(_resultado.isNotEmpty && _entrada.isEmpty && RegExp(r'\d').hasMatch(comando)) {
+        _resultado = '';
+      }
       _entrada += comando;
       _filtrarEntrada();
     }
@@ -46,42 +50,12 @@ class Core {
 
     _limpar();
     try {
-      _resultado = npr.resultado(expressao).toString();
-    } on ArgumentError catch(e) {
+      if(expressao.isNotEmpty) {
+        _resultado = npr.resultado(expressao).toString();
+      }
+    } on CalculatorError catch(e) {
       _erro = e.message;
     }
-  }
-
-  List<String> _filtrarOperandos(String expressao) {
-    var operandos = expressao.split(NotacaoPolonesaReversa.operadorRegex);
-    operandos = operandos.where((e) => e.isNotEmpty).toList();
-
-    //Remove pontos do começo de operandos
-    for(int i = 0; i < operandos.length ; i++) {
-      operandos[i] = operandos[i].replaceAll(RegExp(r'^[\.]+'), '');
-    }
-    operandos = operandos.where((e) => e.isNotEmpty).toList();
-
-    //Remove pontos repetidos à direita do operando
-    for(int i = 0; i < operandos.length ; i++) {
-      var primeiroPonto = operandos[i].indexOf('.');
-      if(primeiroPonto == -1) continue;
-      var antes = operandos[i].substring(0, primeiroPonto + 1);
-      var depois = operandos[i].substring(primeiroPonto + 1).replaceAll('.', '');
-
-      operandos[i] = antes + depois;
-    }
-
-    //Remover 0s à esquerda
-    for(int i = 0; i < operandos.length ; i++) {
-      operandos[i] = operandos[i].replaceAll(RegExp(r'^0+'), '');
-
-      if(operandos[i].isEmpty || operandos[i].startsWith('.')) {
-        operandos[i] = "0${operandos[i]}";
-      }
-    }
-
-    return operandos;
   }
 
   void _filtrarEntrada() {
@@ -91,7 +65,6 @@ class Core {
     texto = texto.replaceAll(NotacaoPolonesaReversa.caracteresPermitidosRegex, '');
 
     // Remove todos os operadores do início
-    // TODO isso está impedindo que o resultado colocado seja negativo
     if(_resultado.isEmpty) {
       texto = texto.replaceAll(RegExp(r'^[\+\-\×\÷]+'), '');
     }
@@ -102,7 +75,7 @@ class Core {
     var operadores = texto.split(NotacaoPolonesaReversa.operandoRegex);
     operadores = operadores.where((e) => e.isNotEmpty).toList();
 
-    //Remove os operadores consecutivos
+    //Remove os operadores consecutivos, mantendo o último digitado
     for(int i = 0; i < operadores.length ; i++) {
       operadores[i] = operadores[i][operadores[i].length-1];
     }
@@ -156,7 +129,6 @@ class Core {
         }
       }
     }
-    
 
     _entrada = novoConteudo;
   }

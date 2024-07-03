@@ -1,5 +1,7 @@
+import 'package:rafael3032191/classes/calculator_error.dart';
+
 class NotacaoPolonesaReversa {
-  static final RegExp operandoRegex = RegExp(r'[0-9\.]+');
+  static final RegExp operandoRegex = RegExp(r'[0-9\.]+e[\+\-][[0-9]+|[0-9\.]+');
   static final RegExp operadorRegex = RegExp(r'[\+\-\×\÷]');
   static final RegExp caracteresPermitidosRegex = RegExp(r'[^0-9\+\-\×\÷\.]');
 
@@ -16,7 +18,7 @@ class NotacaoPolonesaReversa {
 
   static double operacao(List<double> operandos, String operador) {
     if(operandos.isEmpty) {
-      throw ArgumentError('É preciso ter no mínimo 1 operando!');
+      throw CalculatorError(message: "Syntax Error");
     }
 
     switch(operador) {
@@ -25,7 +27,7 @@ class NotacaoPolonesaReversa {
       case '×': return NotacaoPolonesaReversa._multiplicacao(operandos);
       case '÷': return NotacaoPolonesaReversa._divisao(operandos);
       default:
-        throw ArgumentError("Esse operador não é válido em uma expressão!");
+        throw CalculatorError(message: "Syntax Error");
     }
   }
 
@@ -61,14 +63,14 @@ class NotacaoPolonesaReversa {
 
   static double _divisao(List<double> numeros) {
     if(numeros.length < 2) {
-      throw ArgumentError("Para realizar essa operação são necessários 2 operandos!");
+      throw CalculatorError(message: "Syntax Error");
     }
 
     double resultado = numeros[0];
     
     for(var i = 1; i < numeros.length ; i++) {
       if(numeros[i] == 0) {
-        throw ArgumentError('Division by 0');
+        throw CalculatorError(message: 'Division by 0');
       }
       resultado /= numeros[i];
     }
@@ -76,10 +78,19 @@ class NotacaoPolonesaReversa {
   }
 
   List<String> _tokenizaInfixa(String expressaoInfixa) {
-    var operandos = expressaoInfixa.split(NotacaoPolonesaReversa.operadorRegex);
-    operandos = operandos.where((e) => e.isNotEmpty).toList();
+    if(RegExp(r'[\+\-\×\÷]$').hasMatch(expressaoInfixa)) {
+      throw CalculatorError(message: 'Syntax Error');
+    }
+
+    var operandos = NotacaoPolonesaReversa.operandoRegex.allMatches(expressaoInfixa).map((match) => match.group(0)!).toList();
     var operadores = expressaoInfixa.split(NotacaoPolonesaReversa.operandoRegex);
     operadores = operadores.where((e) => e.isNotEmpty).toList();
+
+    for(var operando in operandos) {
+      if(operando.endsWith('.')) {
+        throw CalculatorError(message: 'Syntax Error');
+      }
+    }
 
     List<String> tokens = [];
     while(operandos.isNotEmpty || operadores.isNotEmpty) {
